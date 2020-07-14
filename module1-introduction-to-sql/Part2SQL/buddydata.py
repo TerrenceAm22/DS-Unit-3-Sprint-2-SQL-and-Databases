@@ -8,4 +8,5 @@ conn = sqlite3.connect('buddy.db')
 
 df = pandas.read_csv("buddymove_holidayiq.csv")
 df.to_sql('users', con=conn)
-engine.execute("SELECT * FROM users").fetchall()
+query = engine.execute("SELECT COUNT(Sports) FROM users").fetchall()
+print(query)
