@@ -11,9 +11,6 @@ DB_PASSWORD = 'cTA7aHWgPxf4kzOOBeKS5dhRUSW4sk5i'
 DB_HOST = 'ruby.db.elephantsql.com'
 
 
-
-
-
 ### Connecting to ELephantSQL
 class DatabaseConnection:
     def __init__(self):
@@ -43,35 +40,37 @@ class DatabaseConnection:
         
     
     def create_table(self):
-        titanic = """
-        CREATE TABLE IF NOT EXISTS passengers (
-            id SERIAL PRIMARY KEY,
-            survived bool,
-            pclass int,
-            name varchar,
-            sex varchar,
-            age int,
-            sib_spouse_count int,
-            parent_child_count int,
-            fare float8
-            );
+        titanic = """ 
+        CREATE TYPE sex AS ENUM ('male', 'female');
+        CREATE TABLE titanic (
+            Survived INTEGER NOT NULL,
+            Pclass INTEGER NOT NULL,
+            Name TEXT NOT NULL,
+            Sex sex,
+            Age NUMERIC NOT NULL,
+            Siblings_Spouses Aboard INTEGER NOT NULL,
+            Parents/Children Aboard INTEGER NOT NULL,
+            Fare NUMERIC NOT NULL);
             """
-        self.cursor.execute(titanic)
-    
+        self.connection.commit()
+
     def data(self):
-        f = open(r'/Users/terrenceam22/Documents/Build/DS-Unit-3-Sprint-2-SQL-and-Databases/module2-sql-for-analysis/titanic.csv', 'r')
-        self.cursor.copy_from(f, 'titanic', sep=',')
+        f = open('/Users/terrenceam22/Documents/Build/DS-Unit-3-Sprint-2-SQL-and-Databases/module2-sql-for-analysis/titanic.csv', 'w')
+        self.cursor.copy_to(f, 'passengers', sep=',')
         f.close()
+        f = open('/Users/terrenceam22/Documents/Build/DS-Unit-3-Sprint-2-SQL-and-Databases/module2-sql-for-analysis/titanic.csv', 'r')
+        self.cursor.copy_from(f, 'titanic', sep=',')
         self.connection.commit()
-    
+        
     def insert_data(self):
-        list_of_tuples = list(df.to_records(index=True))
-        insertion_query = "INSERT INTO passengers (id, survived, pclass, name, gender, age, sib_spouse_count, parent_child_count, fare) VALUES %s"
-        execute_values(cursor, insertion_query, list_of_tuples)
-        self.connection.commit()
+        with open(r'titanic.csv', 'r') as f:
+            self.cursor.copy_from(f, 'titanic', sep=',')
+            f.close()
+            self.connection.commit()
+        
         
 if __name__=='__main__':
     database_connection = DatabaseConnection()
     #database_connection.create_table()
-    database_connection.data()
+    #database_connection.data()
     database_connection.insert_data()
