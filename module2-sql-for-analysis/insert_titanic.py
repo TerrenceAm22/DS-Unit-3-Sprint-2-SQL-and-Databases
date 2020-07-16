@@ -4,11 +4,12 @@ import os
 import csv
 import pandas 
 from pandas import read_csv
+from dotenv import load_dotenv
 
-DB_NAME = 'ggrrjklv'
-DB_USER = 'ggrrjklv'
-DB_PASSWORD = 'cTA7aHWgPxf4kzOOBeKS5dhRUSW4sk5i'
-DB_HOST = 'ruby.db.elephantsql.com'
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
 
 
 ### Connecting to ELephantSQL

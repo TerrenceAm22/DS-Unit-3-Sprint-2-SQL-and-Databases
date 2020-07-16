@@ -9,6 +9,7 @@ verify_ssl = true
 pandas = "*"
 numpy = "*"
 dash = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"
