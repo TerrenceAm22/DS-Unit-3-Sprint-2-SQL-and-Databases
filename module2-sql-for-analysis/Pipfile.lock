@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9411813a8ba9673b358afefdb47fd4a13bf5ff0012f0439e5fa2175180b92ea2"
+            "sha256": "47e08f7074f9f73e49ed3aa05c114c7927c9e5275417a78e371cc884dad27579"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -61,6 +61,13 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==7.1.2"
+        },
+        "csv-to-sqlite": {
+            "hashes": [
+                "sha256:d67d2f3d41ee9ae1841e40ad6a853855083626f9ae2b10fda50c5927f7803bae"
+            ],
+            "index": "pypi",
+            "version": "==2.1.0"
         },
         "dash": {
             "hashes": [

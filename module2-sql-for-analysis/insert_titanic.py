@@ -5,14 +5,15 @@ import csv
 import pandas 
 from pandas import read_csv
 from dotenv import load_dotenv
-
+import sqlite3
+sl_conn = sqlite3.connect('titanic.db')
+sl_curs = sl_conn.cursor()
+load_dotenv()
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
 
-
-### Connecting to ELephantSQL
 class DatabaseConnection:
     def __init__(self):
         try:
@@ -23,55 +24,57 @@ class DatabaseConnection:
             print("Cannot Connect to database")
     
     def table_creation(self):
-        table_creation_query = """
-        DROP TABLE passengers;
-        CREATE TABLE IF NOT EXISTS passengers (
-            id SERIAL PRIMARY KEY,
-            survived integer,
-            pclass integer,
-            name varchar NOT NULL,
-            gender varchar NOT NULL,
-            age float,
-            sib_spouse_count integer,
-            parent_child_count integer,
-            fare float);
-            """
-        self.cursor.execute(table_creation_query)
-        
+        create_table = """
+        DROP TABLE IF EXISTS passengers;
+        CREATE TABLE  passengers(
+        id SERIAL PRIMARY KEY,
+        survived int,
+        pclass integer,
+        name varchar(250),
+        gender varchar(30),
+        age float,
+        sib_spouse_count int,
+        parent_child_spouse int,
+        fare float)
+        """
+        self.cursor.execute(create_table)
+    def insert_data(self):
+        get_passengers = 'SELECT Survived, Pclass, Name, Sex, Age, SibSp, Parch, Fare FROM passengers;'
+        peoples = sl_curs.execute(get_passengers).fetchall()
+        for people in peoples:
+            insert_people = """
+            INSERT INTO passengers
+            (Survived, Pclass, Name, gender, Age, sib_spouse_count, parent_child_spouse, Fare)
+            VALUES(%s, %s, %s, %s, %s, %s, %s,%s) """
+            print(people[1:]) 
+            self.cursor.execute(insert_people, people)
+            self.connection.commit()
+    def survivors(self):
+        self.cursor.execute('SELECT COUNT(survived) FROM passengers WHERE survived = 0;')
+        print(self.cursor.fetchall())
+        self.connection.commit()
+    
+    def average_age(self):
+        self.cursor.execute('SELECT AVG(age) FROM passengers;')
+        print(self.cursor.fetchall())
+        self.connection.commit()
+    
+    def average_fare(self):
+        self.cursor.execute('SELECT AVG(fare) FROM passengers WHERE survived = 1;')
+        print(self.cursor.fetchall())
+        self.connection.commit()
+    def average_parch(self):
+        pass
+
+
+
+
         
     
-    def create_table(self):
-        titanic = """ 
-        CREATE TYPE sex AS ENUM ('male', 'female');
-        CREATE TABLE titanic (
-            Survived INTEGER NOT NULL,
-            Pclass INTEGER NOT NULL,
-            Name TEXT NOT NULL,
-            Sex sex,
-            Age NUMERIC NOT NULL,
-            Siblings_Spouses Aboard INTEGER NOT NULL,
-            Parents/Children Aboard INTEGER NOT NULL,
-            Fare NUMERIC NOT NULL);
-            """
-        self.connection.commit()
-
-    def data(self):
-        f = open('/Users/terrenceam22/Documents/Build/DS-Unit-3-Sprint-2-SQL-and-Databases/module2-sql-for-analysis/titanic.csv', 'w')
-        self.cursor.copy_to(f, 'passengers', sep=',')
-        f.close()
-        f = open('/Users/terrenceam22/Documents/Build/DS-Unit-3-Sprint-2-SQL-and-Databases/module2-sql-for-analysis/titanic.csv', 'r')
-        self.cursor.copy_from(f, 'titanic', sep=',')
-        self.connection.commit()
-        
-    def insert_data(self):
-        with open(r'titanic.csv', 'r') as f:
-            self.cursor.copy_from(f, 'titanic', sep=',')
-            f.close()
-            self.connection.commit()
-        
-        
 if __name__=='__main__':
     database_connection = DatabaseConnection()
-    #database_connection.create_table()
-    #database_connection.data()
-    database_connection.insert_data()
+    #database_connection.table_creation()
+    #database_connection.insert_data()
+    #print(database_connection.survivors())
+    #print(database_connection.average_age())
+    print(database_connection.average_fare())

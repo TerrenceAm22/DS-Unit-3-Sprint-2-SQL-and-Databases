@@ -10,6 +10,7 @@ pandas = "*"
 numpy = "*"
 dash = "*"
 python-dotenv = "*"
+csv-to-sqlite = "*"
 
 [requires]
 python_version = "3.8"
